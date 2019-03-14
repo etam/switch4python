@@ -2,22 +2,22 @@ from switch import switch
 
 x = 5
 
-with switch(x) as s:
-    if s.case(4):
+with switch(x) as case:
+    if case(4):
         assert False
-    if s.case(5):
+    if case(5):
         assert True
-        s.fallthrough()
-    if s.case(5):
+        case.fallthrough()
+    if case(5):
         assert True
-    if s.case(5):
+    if case(5):
         assert False
-    if s.case(6):
+    if case(6):
         assert False
 
 
-with switch(3) as s:
-    if s.case(lambda x: x > 5):
+with switch(3) as case:
+    if case(lambda x: x > 5):
         assert False
-    if s.default():
+    if case.default():
         assert True

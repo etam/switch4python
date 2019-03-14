@@ -4,12 +4,12 @@ __all__ = ['switch']
 from contextlib import contextmanager
 
 
-class Switch:
+class Case:
     def __init__(self, value):
         self.value    = value
         self.finished = False
 
-    def case(self, cond):
+    def __call__(self, cond):
         if self.finished:
             return False
 
@@ -32,7 +32,7 @@ class Switch:
     def default(self):
         return not self.finished
 
+
 @contextmanager
 def switch(value):
-    the_switch = Switch(value)
-    yield the_switch
+    yield Case(value)
