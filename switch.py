@@ -2,21 +2,33 @@ __all__ = ['switch']
 
 
 from contextlib import contextmanager
+from typing import (
+    cast,
+    Callable,
+    Generator,
+    Generic,
+    TypeVar,
+    Union,
+)
 
 
-class Case:
-    def __init__(self, value):
-        self.value    = value
+T = TypeVar('T')
+GuardT = Callable[[T], bool]
+
+
+class Case(Generic[T]):
+    def __init__(self, value: T):
+        self.value = value
         self.finished = False
 
-    def __call__(self, cond):
+    def __call__(self, cond: Union[T, GuardT]) -> bool:
         if self.finished:
             return False
 
         match = False
 
         if hasattr(cond, '__call__'):
-            if cond(self.value):
+            if cast(GuardT, cond)(self.value):
                 match = True
         elif cond == self.value:
             match = True
@@ -26,13 +38,13 @@ class Case:
 
         return match
 
-    def fallthrough(self):
+    def fallthrough(self) -> None:
         self.finished = False
 
-    def default(self):
+    def default(self) -> bool:
         return not self.finished
 
 
 @contextmanager
-def switch(value):
+def switch(value: T) -> Generator[Case[T], None, None]:
     yield Case(value)
