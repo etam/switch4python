@@ -1,4 +1,4 @@
-A switch "statement" for Python. Please don't actually use this.
+A switch "statement" for Python.
 
     x = 5
 
