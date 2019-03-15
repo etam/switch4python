@@ -22,21 +22,14 @@ class Case(Generic[T]):
         self.finished = False
 
     def __call__(self, cond: Union[T, GuardT]) -> bool:
-        if self.finished:
+        if (self.finished
+                or (hasattr(cond, '__call__')
+                    and not cast(GuardT, cond)(self.value))
+                or cond != self.value):
             return False
 
-        match = False
-
-        if hasattr(cond, '__call__'):
-            if cast(GuardT, cond)(self.value):
-                match = True
-        elif cond == self.value:
-            match = True
-
-        if match:
-            self.finished = True
-
-        return match
+        self.finished = True
+        return True
 
     def fallthrough(self) -> None:
         self.finished = False
